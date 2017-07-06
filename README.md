@@ -18,12 +18,14 @@ Demo of using Docker contatiners in Azure Batch (using Shipyard).  This also sho
 
 ## Create a Linux VM (create in the resource group above)
 - Create Ubuntu Server 16.04 LTS  (e.g. adamshipyardvm)
-    Username: shipyarduser  Password: <<REMOVED>> 
-    Hard disk: HDD
-    Size: D1_V2 (does not need to be powerful)
-    Use Managed Disk: Yes
-    Monitoring: Disabled
-    Use the defualts for Networking
+```
+Username: shipyarduser  Password: <<REMOVED>>
+Hard disk: HDD
+Size: D1_V2 (does not need to be powerful)
+Use Managed Disk: Yes
+Monitoring: Disabled
+Use the defualts for Networking
+```
 
 ![alt tag](https://raw.githubusercontent.com/AdamPaternostro/Azure-Docker-Shipyard/master/images/New-Linux-VM.png)
 
@@ -211,7 +213,7 @@ sudo docker push adampaternostro/adamshipyarddockerimage:latest
 ```
 
 ## Run Shipyard
-1 - Create the batch pool to run our Docker container on
+#### Create the batch pool to run our Docker container on
 ```
 sudo docker run --rm -it -v /home/shipyarduser/config:/configs -e SHIPYARD_CONFIGDIR=/configs alfpark/batch-shipyard:cli-latest pool add
 ```
@@ -220,17 +222,21 @@ sudo docker run --rm -it -v /home/shipyarduser/config:/configs -e SHIPYARD_CONFI
 ![alt tag](https://raw.githubusercontent.com/AdamPaternostro/Azure-Docker-Shipyard/master/images/Create-Pools-2.png)
 
 
-2 - Run the Docker container (you can use stdout.txt or stderr.txt)
+#### Run the Docker container (you can use stdout.txt or stderr.txt)
 ```
 sudo docker run --rm -it -v /home/shipyarduser/config:/configs -e SHIPYARD_CONFIGDIR=/configs alfpark/batch-shipyard:cli-latest jobs add --tail stdout.txt
 ```
 ![alt tag](https://raw.githubusercontent.com/AdamPaternostro/Azure-Docker-Shipyard/master/images/Run-Job-1.png)
 
 
-3 - Delete our pool (DO NOT DO THIS UNTIL YOU ARE DONE EXPLORING THE AZURE PORTAL) (you do not have to do this, you can set the auto scaling down to zero when the pool is not in use)
+#### Delete our pool 
+(DO NOT DO THIS UNTIL YOU ARE DONE EXPLORING THE AZURE PORTAL) (you do not have to do this, you can set the auto scaling down to zero when the pool is not in use)
 ```
 sudo docker run --rm -it -v /home/shipyarduser/config:/configs -e SHIPYARD_CONFIGDIR=/configs alfpark/batch-shipyard:cli-latest pool del
 ```
+
+
+---
 
 ## In the Azure Portal
 - You can see the pools, jobs, output files (stdout, stderr) and ssh into each node:
