@@ -248,6 +248,8 @@ sudo docker run --rm -it -v /home/shipyarduser/config:/configs -e SHIPYARD_CONFI
 
 ![alt tag](https://raw.githubusercontent.com/AdamPaternostro/Azure-Docker-Shipyard/master/images/Jobs-UI-3.png)
 
+![alt tag](https://raw.githubusercontent.com/AdamPaternostro/Azure-Docker-Shipyard/master/images/ssh-To-Node-1.png)
+
 ![alt tag](https://raw.githubusercontent.com/AdamPaternostro/Azure-Docker-Shipyard/master/images/ssh-To-Node-2.png)
 
 
