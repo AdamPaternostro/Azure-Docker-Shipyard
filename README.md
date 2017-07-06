@@ -8,9 +8,13 @@ Demo of using Docker contatiners in Azure Batch (using Shipyard).  This also sho
 ## Create Azure Resource Group
 - Create a Resource Group (e.g. AdamShipyardDemo)
 
+![alt tag](https://raw.githubusercontent.com/AdamPaternostro/Azure-Docker-Shipyard/master/images/New-Resource-Group.png)
+
 ## Create Azure Batch Service (create in the resource group above)
 - Create a "Batch Service" account (e.g. adamshipyardbatchservice)
 - When creating the "Batch Service" create a storage account (e.g. adamshipyardstorage)
+
+![alt tag](https://raw.githubusercontent.com/AdamPaternostro/Azure-Docker-Shipyard/master/images/New-Batch-Service-Account.png)
 
 ## Create a Linux VM (create in the resource group above)
 - Create Ubuntu Server 16.04 LTS  (e.g. adamshipyardvm)
@@ -21,7 +25,17 @@ Demo of using Docker contatiners in Azure Batch (using Shipyard).  This also sho
     Monitoring: Disabled
     Use the defualts for Networking
 
+![alt tag](https://raw.githubusercontent.com/AdamPaternostro/Azure-Docker-Shipyard/master/images/New-Linux-VM.png)
+
+## All Resources
+![alt tag](https://raw.githubusercontent.com/AdamPaternostro/Azure-Docker-Shipyard/master/images/Complete-Resource-Group.png)
+
+
 ## Install Docker and Shipyard
+ssh to the Linux computer
+
+![alt tag](https://raw.githubusercontent.com/AdamPaternostro/Azure-Docker-Shipyard/master/images/ssh-To-Linux.png)
+
 ```
 sudo apt-get -y install apt-transport-https ca-certificates curl
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
@@ -39,6 +53,7 @@ sudo docker run hello-world
 ```
 sudo docker pull alfpark/batch-shipyard:cli-latest 
 ```
+![alt tag](https://raw.githubusercontent.com/AdamPaternostro/Azure-Docker-Shipyard/master/images/Install-Shipyard.png)
 
 ## Create a Docker program
 - Create a directory mkdir docker
@@ -68,11 +83,15 @@ done
 ```
 sudo docker build -t adamshipyarddockerimage .
 ```
+![alt tag](https://raw.githubusercontent.com/AdamPaternostro/Azure-Docker-Shipyard/master/images/Build-Dockerfile.png)
+
 
 - List the images
 ```
 sudo docker images
 ```
+![alt tag](https://raw.githubusercontent.com/AdamPaternostro/Azure-Docker-Shipyard/master/images/Docker-Images.png)
+
 
 - Run the image locally
 ```
@@ -80,6 +99,7 @@ sudo docker run -v ~/mnt/share:/share adamshipyarddockerimage
 ```
 
 - Create a respository on Dockerhub (e.g. adamshipyardrepository)
+![alt tag](https://raw.githubusercontent.com/AdamPaternostro/Azure-Docker-Shipyard/master/images/Create-Repository.png)
 
 - Upload image to repository
 ```
@@ -87,6 +107,8 @@ sudo docker login
 sudo docker tag adamshipyarddockerimage adampaternostro/adamshipyarddockerimage:latest
 sudo docker push adampaternostro/adamshipyarddockerimage:latest
 ```
+![alt tag](https://raw.githubusercontent.com/AdamPaternostro/Azure-Docker-Shipyard/master/images/Push-Image-to-Repo.png)
+
 
 ## Create Shipyard files
 - Go back to your home directory (cd ..)
@@ -193,16 +215,38 @@ sudo docker push adampaternostro/adamshipyarddockerimage:latest
 ```
 sudo docker run --rm -it -v /home/shipyarduser/config:/configs -e SHIPYARD_CONFIGDIR=/configs alfpark/batch-shipyard:cli-latest pool add
 ```
+![alt tag](https://raw.githubusercontent.com/AdamPaternostro/Azure-Docker-Shipyard/master/images/Create-Pools-1.png)
+
+![alt tag](https://raw.githubusercontent.com/AdamPaternostro/Azure-Docker-Shipyard/master/images/Create-Pools-2.png)
+
 
 2 - Run the Docker container (you can use stdout.txt or stderr.txt)
 ```
 sudo docker run --rm -it -v /home/shipyarduser/config:/configs -e SHIPYARD_CONFIGDIR=/configs alfpark/batch-shipyard:cli-latest jobs add --tail stdout.txt
 ```
+![alt tag](https://raw.githubusercontent.com/AdamPaternostro/Azure-Docker-Shipyard/master/images/Run-Job-1.png)
 
-3 - Delete our pool (you do not have to do this, you can set the auto scaling down to zero when the pool is not in use)
+
+3 - Delete our pool (DO NOT DO THIS UNTIL YOU ARE DONE EXPLORING THE AZURE PORTAL) (you do not have to do this, you can set the auto scaling down to zero when the pool is not in use)
 ```
 sudo docker run --rm -it -v /home/shipyarduser/config:/configs -e SHIPYARD_CONFIGDIR=/configs alfpark/batch-shipyard:cli-latest pool del
 ```
+
+## In the Azure Portal
+- You can see the pools, jobs, output files (stdout, stderr) and ssh into each node:
+
+![alt tag](https://raw.githubusercontent.com/AdamPaternostro/Azure-Docker-Shipyard/master/images/Jobs-UI-1.png)
+
+![alt tag](https://raw.githubusercontent.com/AdamPaternostro/Azure-Docker-Shipyard/master/images/Jobs-UI-2.png)
+
+![alt tag](https://raw.githubusercontent.com/AdamPaternostro/Azure-Docker-Shipyard/master/images/Jobs-UI-3.png)
+
+![alt tag](https://raw.githubusercontent.com/AdamPaternostro/Azure-Docker-Shipyard/master/images/ssh-To-Node-2.png)
+
+
+
+
+
 
 
 
