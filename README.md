@@ -34,10 +34,11 @@ Use the defualts for Networking
 
 
 ## Install Docker and Shipyard
-ssh to the Linux computer
+#### ssh to the Linux computer
 
 ![alt tag](https://raw.githubusercontent.com/AdamPaternostro/Azure-Docker-Shipyard/master/images/ssh-To-Linux.png)
 
+#### Install Docker
 ```
 sudo apt-get -y install apt-transport-https ca-certificates curl
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
@@ -46,12 +47,12 @@ sudo apt-get update
 sudo apt-get -y install docker-ce
 ```
 
-### Test docker
+#### Test docker
 ```
 sudo docker run hello-world
 ```
 
-### For Shipyard image
+#### For Shipyard image
 ```
 sudo docker pull alfpark/batch-shipyard:cli-latest 
 ```
