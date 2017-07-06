@@ -252,6 +252,14 @@ sudo docker run --rm -it -v /home/shipyarduser/config:/configs -e SHIPYARD_CONFI
 
 ![alt tag](https://raw.githubusercontent.com/AdamPaternostro/Azure-Docker-Shipyard/master/images/ssh-To-Node-2.png)
 
+## What's Next
+- Change the Docker image to do some processing
+
+- In the jobs.json you can pass parameters to your container.  Typically you would stage your data to be processed in Blob or Azure Data Lake Storage (ADLS) and then download to the batch worker node, process and then upload the results.  The parameter is typically the name of the blob data or ADLS data to process.
+
+- To use this for a real workload you would need a small program to generate a jobs.json and then submit the job to Azure Batch
+
+- You can also use Azure Functions and go serverless to submit jobs through Azure Batch: https://github.com/Azure/batch-shipyard/blob/master/docs/60-batch-shipyard-site-extension.md
 
 
 
