@@ -118,105 +118,75 @@ sudo docker push adampaternostro/adamshipyarddockerimage:latest
 - Make a directory (e.g. config)
 - cd config
 
-- Create a file named "config.json"
+- Create a file named "config.yaml"
   - Description: This contains a reference to a storage account used by Shipyard for its own internal purposes.  It also has a reference to our Docker image as well a Data Volume so we know where to download our files.
   - For full schema: https://github.com/Azure/batch-shipyard/blob/master/docs/12-batch-shipyard-configuration-global.md
 ```
-  {  
-     "batch_shipyard":{  
-        "storage_account_settings":"mystorageaccount"
-     },
-     "global_resources":{  
-        "docker_images":[  
-           "adampaternostro/adamshipyarddockerimage:latest"
-        ],
-        "docker_volumes":{  
-           "data_volumes":{  
-              "ephemeraldisk":{  
-                 "host_path":"/mnt/docker-tmp",
-                 "container_path":"/share"
-              }
-           }
-        }
-     }
-  }
+batch_shipyard:
+  storage_account_settings: mystorageaccount
+global_resources:
+  docker_images:
+  - adampaternostro/adamshipyarddockerimage:latest
+  docker_volumes:
+    data_volumes:
+      ephemeraldisk:
+        host_path: "/mnt/docker-tmp"
+        container_path: "/share"
 ```
 
-- Create a file named "credentials.json"
+- Create a file named "credentials.yaml"
   - For full schema: https://github.com/Azure/batch-shipyard/blob/master/docs/11-batch-shipyard-configuration-credentials.md
   - Change the Batch: account_key and account_service_url
   - Change the mystorageaccount: account and account key (NOTE: keep the name mystorageaccount since it is referenced in the "config.json")
 ```
-{  
-   "credentials":{  
-      "batch":{  
-         "account_key":"<<REMOVED>>",
-         "account_service_url":"https://adamshipyardbatchservice.eastus2.batch.azure.com"
-      },
-      "storage":{  
-         "mystorageaccount":{  
-            "account":"adamshipyardstorage",
-            "account_key":"<<REMOVED>>",
-            "endpoint":"core.windows.net"
-         }
-      }
-   }
-}
+credentials:
+  batch:
+    account_key: "<<REMOVED>>"
+    account_service_url: https://adamshipyardbatchservice.eastus2.batch.azure.com
+  storage:
+    mystorageaccount:
+      account: adamshipyardstorage
+      account_key: "<<REMOVED>>"
+      endpoint: core.windows.net
 ```
 
-- Create a file named "jobs.json"
+- Create a file named "jobs.ymal"
   - For full schema: https://github.com/Azure/batch-shipyard/blob/master/docs/14-batch-shipyard-configuration-jobs.md
 ```
-{  
-   "job_specifications":[  
-      {  
-         "id":"adamshipyardjob",
-         "data_volumes":[  
-            "ephemeraldisk"
-         ],
-         "tasks":[  
-            {  
-               "image":"adampaternostro/adamshipyarddockerimage:latest",
-               "remove_container_after_exit":true,
-               "command":"bash /app/download.sh"
-            }
-         ]
-      }
-   ]
-}
+job_specifications:
+- id: adamshipyardjob
+  data_volumes:
+  - ephemeraldisk
+  tasks:
+  - docker_image: adampaternostro/adamshipyarddockerimage:latest
+    remove_container_after_exit: true
+    command: bash /app/download.sh
+
 ```
 
-- Create a file named "pool.json"
+- Create a file named "pool.yaml"
   - For full schema: https://github.com/Azure/batch-shipyard/blob/master/docs/13-batch-shipyard-configuration-pool.md
 ```
-{  
-   "pool_specification":{  
-      "id":"adampool",
-      "vm_size":"STANDARD_D1_V2",
-      "vm_count":{  
-         "dedicated":2,
-         "low_priority":0
-      },
-      "vm_configuration":{  
-         "platform_image":{  
-            "publisher":"Canonical",
-            "offer":"UbuntuServer",
-            "sku":"16.04-LTS"
-         }
-      },
-      "ssh":{  
-         "username":"docker"
-      },
-      "reboot_on_start_task_failed":false,
-      "block_until_all_global_resources_loaded":true
-   }
-}
+pool_specification:
+  id: adampool
+  vm_size: STANDARD_D1_V2
+  vm_count:
+    dedicated: 2
+    low_priority: 0
+  vm_configuration:
+    platform_image:
+      publisher: Canonical
+      offer: UbuntuServer
+      sku: 16.04-LTS
+  reboot_on_start_task_failed: false
+  block_until_all_global_resources_loaded: true
+
 ```
 
 ## Run Shipyard
 #### Create the batch pool to run our Docker container on
 ```
-sudo docker run --rm -it -v /home/shipyarduser/config:/configs -e SHIPYARD_CONFIGDIR=/configs alfpark/batch-shipyard:cli-latest pool add
+sudo docker run --rm -it -v /home/shipyarduser/config:/configs -e SHIPYARD_CONFIGDIR=/configs alfpark/batch-shipyard:latest-cli pool add
 ```
 ![alt tag](https://raw.githubusercontent.com/AdamPaternostro/Azure-Docker-Shipyard/master/images/Create-Pools-1.png)
 
@@ -225,7 +195,7 @@ sudo docker run --rm -it -v /home/shipyarduser/config:/configs -e SHIPYARD_CONFI
 
 #### Run the Docker container (you can use stdout.txt or stderr.txt)
 ```
-sudo docker run --rm -it -v /home/shipyarduser/config:/configs -e SHIPYARD_CONFIGDIR=/configs alfpark/batch-shipyard:cli-latest jobs add --tail stdout.txt
+sudo docker run --rm -it -v /home/shipyarduser/config:/configs -e SHIPYARD_CONFIGDIR=/configs alfpark/batch-shipyard:latest-cli jobs add --tail stdout.txt
 ```
 ![alt tag](https://raw.githubusercontent.com/AdamPaternostro/Azure-Docker-Shipyard/master/images/Run-Job-1.png)
 
@@ -233,7 +203,7 @@ sudo docker run --rm -it -v /home/shipyarduser/config:/configs -e SHIPYARD_CONFI
 #### Delete our pool 
 (DO NOT DO THIS UNTIL YOU ARE DONE EXPLORING THE AZURE PORTAL) (you do not have to do this, you can set the auto scaling down to zero when the pool is not in use)
 ```
-sudo docker run --rm -it -v /home/shipyarduser/config:/configs -e SHIPYARD_CONFIGDIR=/configs alfpark/batch-shipyard:cli-latest pool del
+sudo docker run --rm -it -v /home/shipyarduser/config:/configs -e SHIPYARD_CONFIGDIR=/configs alfpark/batch-shipyard:latest-cli pool del
 ```
 
 
@@ -260,11 +230,3 @@ sudo docker run --rm -it -v /home/shipyarduser/config:/configs -e SHIPYARD_CONFI
 - To use this for a real workload you would need a small program to generate a jobs.json and then submit the job to Azure Batch
 
 - You can also use Azure Functions and go serverless to submit jobs through Azure Batch: https://github.com/Azure/batch-shipyard/blob/master/docs/60-batch-shipyard-site-extension.md
-
-
-
-
-
-
-
-
